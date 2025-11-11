@@ -30,16 +30,14 @@ const VehicleCard = () => {
 
                             <p className='text-gray-500 font-bold text-md'>
                                 {vehicle.description}{' '}
-                                <Link
-                                    to={`/CarDetails/${vehicle._id}`}
-                                    className='text-primary'
-                                >
+                                <Link to={`/CarDetails/${vehicle._id}`} className="text-primary">
                                     Car Details...
                                 </Link>
+
                             </p>
                             <div className="card-actions justify-end">
                                 <p className='text-xl font-bold'>Price per day:${vehicle.pricePerDay}</p>
-                                <button className="btn btn-primary rounded-xl">Buy Now</button>
+                                <Link to={`/CarDetails/${vehicle._id}`} className="btn btn-primary rounded-xl">Book Now</Link>
                             </div>
                         </div>
                     </div>

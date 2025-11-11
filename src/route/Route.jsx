@@ -1,13 +1,15 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../Components/RootLayout/RootLayout";
 import Home from "../Components/Pages/Home/Home";
 import AddVehicle from "../Components/Pages/AdVehicle/AddVehicle";
 import Banner from "../Components/Banner/Banner";
-import LoginModal from "../Components/Navbar/Login";
+
 import Login from "../Components/Navbar/Login";
 import CarDetails from "../Components/Pages/CarDetails/CarDetails";
 import Register from "../Components/Navbar/Register";
 import AllVehicle from "../Components/Pages/AllVehivle/AllVehicle";
+import PrivateRoute from "./PrivateRoute";
+import MyBookings from "../Components/Pages/MyBookings/MyBookings";
 
 const router = createBrowserRouter([
     {
@@ -53,8 +55,26 @@ const router = createBrowserRouter([
                     return res.json();
                 },
 
-                element: <CarDetails></CarDetails>
+                element:
+                    <PrivateRoute>
+                        <CarDetails></CarDetails>
+                    </PrivateRoute>
             },
+            {
+                path: '/myBookings',
+                loader: async () => {
+                    const res = await fetch('http://localhost:3000/bookings');
+                    if (!res.ok) throw new Error('Failed to load bookings');
+                    return res.json();
+                },
+
+                element: (
+                    <PrivateRoute>
+                        <MyBookings />
+                    </PrivateRoute>
+                )
+            }
+
         ]
     },
 ]);

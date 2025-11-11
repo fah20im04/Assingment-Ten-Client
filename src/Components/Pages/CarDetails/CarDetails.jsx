@@ -1,32 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Banner from '../../Banner/Banner';
+import { AuthContext } from '../../Auth/AuthContext';
 
 const CarDetails = () => {
     const { id } = useParams();
+    const { user } = useContext(AuthContext);
+
     const [vehicle, setVehicle] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [bookingMessage, setBookingMessage] = useState('');
 
+    // 🔹 Fetch single vehicle data
     useEffect(() => {
-        fetch(`http://localhost:3000/allVehicles/${id}`)
-            .then(res => res.json())
-            .then(data => {
+        const fetchVehicle = async () => {
+            try {
+                const res = await fetch(`http://localhost:3000/allVehicles/${id}`);
+                if (!res.ok) throw new Error('Failed to fetch vehicle details');
+
+                const data = await res.json();
                 setVehicle(data);
+            } catch (error) {
+                console.error('Error fetching vehicle:', error);
+            } finally {
                 setLoading(false);
-            })
-            .catch(err => {
-                console.error("Error fetching vehicle:", err);
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchVehicle();
     }, [id]);
 
-    if (loading) return <p className="text-center mt-20">Loading vehicle details...</p>;
-    if (!vehicle) return <p className="text-center mt-20 text-red-500">Vehicle not found.</p>;
+    // 🔹 Handle booking
+    const handleBooking = async () => {
+        if (!user) {
+            alert('You must be logged in to book.');
+            return;
+        }
 
+        if (!vehicle) {
+            alert('Vehicle data not loaded yet.');
+            return;
+        }
+
+        const bookingData = {
+            vehicleImg: vehicle.coverImage,
+            vehicleId: vehicle._id,
+            vehicleName: vehicle.vehicleName,
+            userEmail: user.email,
+            ownerEmail: vehicle.userEmail,
+            bookedAt: new Date(),
+        };
+
+        try {
+            const res = await fetch('http://localhost:3000/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setBookingMessage('Booking request sent successfully!');
+            } else {
+                setBookingMessage(data.error || 'Booking failed.');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            setBookingMessage(`Booking failed: ${error.message}`);
+        }
+    };
+
+    // 🔹 Loading / error states
+    if (loading) {
+        return <p className="text-center mt-20">Loading vehicle details...</p>;
+    }
+
+    if (!vehicle) {
+        return <p className="text-center mt-20 text-red-500">Vehicle not found.</p>;
+    }
+
+    // 🔹 Main UI (style preserved)
     return (
         <div className="bg-gray-50 min-h-screen">
-
-
             <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
                 {/* Vehicle Image */}
                 <div className="lg:w-2/3 w-full rounded-2xl overflow-hidden shadow-lg">
@@ -40,7 +95,9 @@ const CarDetails = () => {
                 {/* Vehicle Details */}
                 <div className="lg:w-1/3 w-full bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-between">
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">{vehicle.vehicleName}</h2>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                            {vehicle.vehicleName}
+                        </h2>
                         <p className="text-gray-600 mb-4">{vehicle.description}</p>
 
                         <div className="space-y-2 text-gray-700">
@@ -50,16 +107,32 @@ const CarDetails = () => {
                             <p><strong>Location:</strong> {vehicle.location}</p>
                             <p><strong>Availability:</strong> {vehicle.availability}</p>
                             <p><strong>Posted By:</strong> {vehicle.userEmail}</p>
-                            <p><strong>Created At:</strong> {new Date(vehicle.createdAt).toLocaleString()}</p>
+                            <p>
+                                <strong>Created At:</strong>{' '}
+                                {new Date(vehicle.createdAt || vehicle.created_at).toLocaleString()}
+                            </p>
                         </div>
                     </div>
 
-                    {/* Rent Now Button */}
+                    {/* Book Now Button */}
                     <button
-                        className="mt-6 w-full bg-yellow-500 text-white py-3 rounded-xl font-semibold hover:bg-yellow-600 transition"
+                        onClick={handleBooking}
+                        disabled={bookingMessage.includes("already booked")}
+                        className={`w-full py-3 rounded-xl font-semibold transition ${bookingMessage.includes("already booked")
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-yellow-500 hover:bg-yellow-600 text-white"
+                            }`}
                     >
-                        Rent Now
+                        {bookingMessage.includes("already booked") ? "Already Booked" : "Book Now"}
                     </button>
+
+                    {bookingMessage && (
+                        <p className="mt-3 text-center text-sm text-green-600">
+                            {bookingMessage}
+                        </p>
+                    )}
+
+
                 </div>
             </div>
         </div>
