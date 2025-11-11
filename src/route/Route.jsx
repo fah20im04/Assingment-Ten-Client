@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../Components/RootLayout/RootLayout";
 import Home from "../Components/Pages/Home/Home";
-import AddVehicle from "../Components/Pages/AdVehicle/AddVehicle";
 import Banner from "../Components/Banner/Banner";
 
 import Login from "../Components/Navbar/Login";
@@ -10,6 +9,8 @@ import Register from "../Components/Navbar/Register";
 import AllVehicle from "../Components/Pages/AllVehivle/AllVehicle";
 import PrivateRoute from "./PrivateRoute";
 import MyBookings from "../Components/Pages/MyBookings/MyBookings";
+import MyVehicle from "../Components/Pages/MyVehicle/MyVehicle";
+import AddVehicle from "../Components/Pages/AddVehicle/AddVehicle";
 
 const router = createBrowserRouter([
     {
@@ -19,10 +20,6 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Home></Home>
-            },
-            {
-                path: '/addVehicle',
-                element: <AddVehicle></AddVehicle>
             },
             {
                 path: '/allVehicles',
@@ -73,6 +70,14 @@ const router = createBrowserRouter([
                         <MyBookings />
                     </PrivateRoute>
                 )
+            },
+            {
+                path: '/myVehicles',
+                element: <MyVehicle></MyVehicle>
+            },
+            {
+                path: '/addVehicle',
+                element: <AddVehicle></AddVehicle>
             }
 
         ]
