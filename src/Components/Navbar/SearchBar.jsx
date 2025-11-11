@@ -4,45 +4,44 @@ const SearchBar = () => {
     const [searchOpen, setSearchOpen] = useState(false);
 
     return (
-        <div className="relative z-20">
+        <div className="relative z-20 w-1/5 max-w-md">
             {/* Large screens: always visible */}
-            <div className="hidden lg:flex items-center bg-opacity-80 border border-gray-300 bg-none rounded-2xl p-3 w-fit max-w-md shadow-md">
+            <div className="hidden lg:flex relative items-center bg-opacity-90 border border-gray-300 rounded-full px-4 py-2 shadow-md w-full h-[55px]">
                 <input
                     type="text"
-                    placeholder="Search vehicles..."
-                    className="flex-1 outline-none text-gray-700 placeholder-gray-400"
+                    placeholder="Search"
+                    className="flex-grow bg-transparent outline-none text-gray-700 placeholder-gray-500 pr-28"
                 />
-                <button className="ml-2 bg-primary text-white px-4 py-1 rounded-xl transition">
+                <button className="absolute right-2 bg-primary text-white px-4 py-1 rounded-full hover:scale-105 transition-transform">
                     Search
                 </button>
             </div>
 
-            {/* Small/medium screens: button that toggles input */}
-            <div className="flex lg:hidden items-center">
+            {/* Small/medium screens: toggleable input */}
+            <div className="flex lg:hidden items-center justify-end">
                 {!searchOpen ? (
                     <button
                         onClick={() => setSearchOpen(true)}
-                        className=" text-white px-4 py-2 rounded-full hover:font-bold hover:scale-110 border border-gray-400 bg-none transition"
+                        className="text-white px-4 py-2 rounded-full border border-gray-400 bg-primary bg-opacity-80 hover:scale-105 transition"
                     >
-                        Search...
+                        Search
                     </button>
                 ) : (
-                    <div className="relative w-full max-w-xs transition-all duration-300">
+                        <div className="relative flex items-center bg-opacity-90 border border-gray-300 rounded-full px-4 py-2 shadow-md w-full max-w-xs">
                         <input
                             type="text"
-                            placeholder="Search..."
-                            className="w-[150px] h-[45px] pl-4 pr-16 rounded-2xl border border-gray-300 outline-none text-gray-700 placeholder-gray-400"
+                                placeholder="Search"
+                                className="flex-grow bg-transparent outline-none text-gray-700 placeholder-gray-500 pr-24"
                         />
                         <button
                             onClick={() => setSearchOpen(false)}
-                            className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full hover:bg-red-600 transition"
+                                className="absolute right-2 bg-primary text-white px-4 py-1 rounded-full hover:scale-105 transition-transform"
                         >
                             Go
                         </button>
                     </div>
                 )}
             </div>
-
         </div>
     );
 };

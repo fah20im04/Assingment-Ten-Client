@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import '../../index.css';
 import Car from '../../assets/dodge_challenger_srt_hellcat_redeye_widebody_jailbreak_2022_4k_8k_2-HD.jpg';
 import { HiMenu, HiX } from 'react-icons/hi'; // Hamburger icons
 import SearchBar from './SearchBar';
+import Banner from '../Banner/Banner';
+import { AuthContext } from '../Auth/AuthContext';
 
-const Navbar = () => {
+const Navbar = ({ onLoginClick }) => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { user, logOut } = useContext(AuthContext);
+
 
     return (
-        <div className="relative w-full">
+        <div className="relative w-full"
+        // style={{
+        //     backgroundImage: `url(${Car})`,
+        //     backgroundSize: 'cover',
+        //     backgroundPosition: 'center',
+        //     backgroundRepeat: 'no-repeat',
+        // }}
+        >
             {menuOpen && (
-                <div className="md:hidden absolute text-gray-300 top-20 left-[330px] w-[150px] rounded-2xl shadow-xl bg-opacity-10  border border-gray-600 z-30">
+                <div className="md:hidden absolute text-gray-400 top-20 left-2/3 transform -translate-x-1/2 w-[30%] max-w-xs rounded-2xl shadow-xl border border-gray-600 z-30">
+
                     <ul className="flex flex-col gap-1 p-3  font-semibold">
                         <li>
                             <NavLink to="/" onClick={() => setMenuOpen(false)}>Home</NavLink>
@@ -35,16 +47,7 @@ const Navbar = () => {
                     </ul>
                 </div>
             )}
-            {/* Car Background Image */}
-            <div className="absolute inset-0">
-                <img
-                    src={Car}
-                    alt="Car"
-                    className="w-full h-fit object-cover"
-                />
-                {/* Optional overlay for blending */}
-                <div className="absolute inset-0 bg-opacity-30"></div>
-            </div>
+
 
 
 
@@ -62,15 +65,15 @@ const Navbar = () => {
                     </a>
                 </div>
 
-                
+
 
 
 
 
 
                 {/* Navlinks (hidden on sm/md, visible on lg+) */}
-                <div className="hidden md:flex bg-[#d6ccc2] bg-opacity-80 p-4 rounded-2xl w-fit shadow-md flex border border-gray-300 gap-6 font-semibold text-gray-400 text-sm h-10">
-                    <ul className="flex items-center text-center gap-6 list-none p-0 m-0">
+                <div className="hidden md:flex bg-opacity-80 p-4 rounded-2xl w-fit shadow-md flex border border-gray-300 gap-6 font-semibold text-black text-sm h-10">
+                    <ul className="flex items-center text-center gap-6 text-sm list-none p-0 m-0">
                         <li>
                             <NavLink to="/">Home</NavLink>
                         </li>
@@ -97,38 +100,46 @@ const Navbar = () => {
 
                 {/* Login */}
                 <div className="flex items-center gap-4">
-                    <button className="bg-primary bg-opacity-90 rounded-2xl font-bold text-xl text-white border-gray-300 transform transition-transform duration-300 hover:scale-105 px-6 py-2">
-                        LogIn
-                    </button>
-                    {/* Hamburger icon next to LogIn */}
+                    {user ? (
+                        <>
+                            <button
+                                title={user.displayName}
+                                onClick={logOut}
+                                className="bg-red-500 bg-opacity-90 rounded-2xl font-bold text-xl text-white border-gray-300 transform transition-transform duration-300 hover:scale-105 px-6 py-2"
+                            >
+                                LogOut
+                            </button>
+                            <img
+                                src={user.photoURL}
+                                alt="Profile"
+                                className="w-10 h-10 rounded-full border-2 border-white"
+                            />
+                        </>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="bg-primary bg-opacity-90 rounded-2xl font-bold text-xl text-white border-gray-300 transform transition-transform duration-300 hover:scale-105 px-6 py-2"
+                        >
+                            LogIn
+                        </Link>
+                    )}
                     <div className="md:hidden">
                         <button
                             onClick={() => setMenuOpen(!menuOpen)}
-                            className="text-white text-3xl"
+                            className="text-black text-3xl"
                         >
                             {menuOpen ? <HiX /> : <HiMenu />}
                         </button>
                     </div>
                 </div>
 
+
             </div>
 
-            
 
 
-            {/* Hero Text */}
-            <div className="absolute items-end left-15 top-50 text-white z-10">
-                <h1 className="text-4xl md:text-6xl font-bold">
-                ___ Drive more                                     
-                </h1>
-                
-            </div>
-            <div className="absolute items-end top-120 left-200 text-white z-10">
-                <h1 className="text-4xl md:text-6xl font-bold">
-                                                   worry less ___
-                </h1>
-                
-            </div>
+
+
         </div>
     );
 };
