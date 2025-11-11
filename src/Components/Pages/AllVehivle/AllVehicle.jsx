@@ -5,9 +5,9 @@ const AllVehicle = () => {
     const vehicles = useLoaderData();
     return (
         <div className="p-5">
-            <img className=' lg:h-[600px] lg:w-full sm:w-[400px] sm:h-[200px] md:w-full md:h-[400px] object-cover' src="https://i.ibb.co.com/fV1PfqHR/thomas-sabu-pva-A12-P-6s4-unsplash.jpg" alt="" />
+            <img className='lg:h-[600px] lg:w-full sm:w-[400px] sm:h-[200px] md:w-full md:h-[400px] object-cover' src="https://i.ibb.co.com/qFnRt8dB/john-matychuk-Fg-Tcok-Jpm9w-unsplash.jpg" alt="" />
 
-            <h1 className='font-bold text-primary text-5xl text-center'>ALL VEHICLE ({vehicles.length})</h1>
+            <h1 className='mt-10 font-bold text-primary text-5xl text-center'>ALL VEHICLE ({vehicles.length})</h1>
 
 
             <div className="grid mt-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-10 w-full max-w-7xl mx-auto">
