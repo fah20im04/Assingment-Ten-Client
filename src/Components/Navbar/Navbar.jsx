@@ -1,10 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import '../../index.css';
-import Car from '../../assets/dodge_challenger_srt_hellcat_redeye_widebody_jailbreak_2022_4k_8k_2-HD.jpg';
 import { HiMenu, HiX } from 'react-icons/hi'; // Hamburger icons
 import SearchBar from './SearchBar';
-import Banner from '../Banner/Banner';
 import { AuthContext } from '../Auth/AuthContext';
 
 const Navbar = ({ onLoginClick }) => {
