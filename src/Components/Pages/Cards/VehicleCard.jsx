@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import axiosInstance from '../../../Api/axiosInstance';
 
 const VehicleCard = () => {
     const [vehicles, setVehicles] = useState([]);
@@ -7,11 +8,17 @@ const VehicleCard = () => {
     // data fetch from server
 
     useEffect(() => {
-        fetch('http://localhost:3000/vehicles')
-            .then(res => res.json())
-            .then((data) => setVehicles(data))
-            .catch((error) => console.error('Error in vehiles data fetch', error));
-    }, [])
+        const fetchVehicles = async () => {
+            try {
+                const res = await axiosInstance.get("/vehicles");
+                setVehicles(res.data);
+            } catch (error) {
+                console.error("Error fetching vehicles:", error);
+            }
+        };
+
+        fetchVehicles();
+    }, []);
 
     return (
         <div className="p-5">

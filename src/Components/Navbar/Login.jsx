@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import Banner from '../Banner/Banner';
 import { AuthContext } from '../Auth/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../Api/axiosInstance';
 
 const Login = () => {
   const { signIn, signInWithGoogle } = useContext(AuthContext);
@@ -13,35 +14,35 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
+
     try {
       const result = await signIn(email, password);
       const user = result.user;
 
       const userData = {
-        name: user.displayName || 'No Name',
+        name: user.displayName || "No Name",
         email: user.email,
-        photo: user.photoURL || '',
+        photo: user.photoURL || "",
         createdAt: new Date(),
       };
 
-      // Send to backend (won’t create duplicate because backend checks)
-      await fetch('http://localhost:3000/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
 
-      console.log('Logged-in user saved/verified in MongoDB');
-      navigate('/');
+      await axiosInstance.post("/users", userData);
+
+      console.log("Logged-in user saved/verified in MongoDB");
+      navigate("/");
     } catch (err) {
-      setError('Invalid email or password',err);
+      console.error("Login error:", err);
+      setError("Invalid email or password");
     }
   };
 
+
   // Google login
   const handleGoogleLogin = async () => {
-    setError('');
+    setError("");
+
     try {
       const result = await signInWithGoogle();
       const user = result.user;
@@ -53,18 +54,17 @@ const Login = () => {
         createdAt: new Date(),
       };
 
-      await fetch('http://localhost:3000/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
 
-      console.log('Google user saved to MongoDB');
-      navigate('/');
+      await axiosInstance.post("/users", userData);
+
+      console.log("Google user saved to MongoDB");
+      navigate("/");
     } catch (err) {
-      setError('Google sign-in failed',err);
+      console.error("Google sign-in failed:", err);
+      setError("Google sign-in failed");
     }
   };
+
 
 
   return (
@@ -72,7 +72,7 @@ const Login = () => {
 
 
 
-      
+
       <div className="flex justify-center mt-32 px-4">
         <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
           <h2 className="text-3xl font-semibold text-gray-800 text-center mb-2">

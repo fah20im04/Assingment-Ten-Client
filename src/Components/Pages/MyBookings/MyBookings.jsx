@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
+import axiosInstance from "../../../Api/axiosInstance";
+import Swal from "sweetalert2";
 
 const MyBookings = () => {
     const loaderData = useLoaderData();
@@ -11,24 +13,24 @@ const MyBookings = () => {
         if (!confirmDelete) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/bookings/${bookingId}`, {
-                method: "DELETE",
+            const res = await axiosInstance.delete(`/bookings/${bookingId}`);
+
+            Swal.fire({
+                icon: "success",
+                title: "Cancelled!",
+                text: res.data.message || "Booking cancelled successfully!",
+                timer: 2000,
+                showConfirmButton: false,
             });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                alert("Booking cancelled successfully!");
-                // Remove cancelled booking from state
-                setBookings(bookings.filter((b) => b._id !== bookingId));
-            } else {
-                alert(data.error || "Failed to cancel booking");
-            }
+            // Remove cancelled booking from state
+            setBookings((prev) => prev.filter((b) => b._id !== bookingId));
         } catch (err) {
             console.error("Error cancelling booking:", err);
-            alert("Something went wrong!");
+            Swal.fire("Error", err.response?.data?.error || "Something went wrong!", "error");
         }
     };
+
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">

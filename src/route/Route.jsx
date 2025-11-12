@@ -11,6 +11,7 @@ import PrivateRoute from "./PrivateRoute";
 import MyBookings from "../Components/Pages/MyBookings/MyBookings";
 import MyVehicle from "../Components/Pages/MyVehicle/MyVehicle";
 import AddVehicle from "../Components/Pages/AddVehicle/AddVehicle";
+import UpdateVehicle from "../Components/Pages/UpdataVehicle/UpdateVehicle";
 
 const router = createBrowserRouter([
     {
@@ -78,6 +79,14 @@ const router = createBrowserRouter([
             {
                 path: '/addVehicle',
                 element: <AddVehicle></AddVehicle>
+            },
+            {
+                path: '/updateVehicle/:id',
+                element: (
+                    <PrivateRoute>       // If you want only logged-in users
+                        <UpdateVehicle />
+                    </PrivateRoute>
+                )
             }
 
         ]

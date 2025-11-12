@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../Auth/AuthContext";
+import axiosInstance from "../../../Api/axiosInstance";
 
 const AddVehicle = () => {
     const { user } = useContext(AuthContext);
@@ -29,38 +30,31 @@ const AddVehicle = () => {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:3000/vehicles", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+            const res = await axiosInstance.post("/vehicles", formData);
+
+            setToastMessage(res.data.message || "Vehicle added successfully!");
+
+            // Reset form
+            setFormData({
+                vehicleName: "",
+                owner: "",
+                category: "",
+                pricePerDay: "",
+                location: "",
+                availability: "",
+                description: "",
+                coverImage: "",
+                userEmail: user?.email || "",
             });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                setToastMessage("Vehicle added successfully!");
-                setFormData({
-                    vehicleName: "",
-                    owner: "",
-                    category: "",
-                    pricePerDay: "",
-                    location: "",
-                    availability: "",
-                    description: "",
-                    coverImage: "",
-                    userEmail: user.email || "",
-                });
-            } else {
-                setToastMessage(data.error || "Failed to add vehicle");
-            }
         } catch (err) {
             console.error(err);
-            setToastMessage("Something went wrong: " + err.message);
+            setToastMessage(err.response?.data?.error || "Something went wrong");
         } finally {
             setLoading(false);
             setTimeout(() => setToastMessage(""), 3000);
         }
     };
+
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8">
@@ -158,9 +152,8 @@ const AddVehicle = () => {
 
                 <button
                     type="submit"
-                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${
-                        loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600"
-                    }`}
+                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600"
+                        }`}
                     disabled={loading}
                 >
                     {loading ? "Adding..." : "Add Vehicle"}

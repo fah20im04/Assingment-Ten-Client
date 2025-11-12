@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Auth/AuthContext';
+import axiosInstance from '../../Api/axiosInstance';
 
 const Register = () => {
     const { createUser, updateUserProfile, signInWithGoogle } = useContext(AuthContext);
@@ -21,12 +22,11 @@ const Register = () => {
         }
 
         try {
-            // Create user in Firebase
+
             const result = await createUser(email, password);
             await updateUserProfile(name, photo);
-            console.log('✅ User registered:', result.user);
 
-            // Send user data to backend
+
             const userData = {
                 name,
                 email,
@@ -34,21 +34,18 @@ const Register = () => {
                 createdAt: new Date(),
             };
 
-            await fetch('http://localhost:3000/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData),
-            });
+            await axiosInstance.post("/users", userData);
 
-            console.log('✅ User saved to MongoDB');
+            console.log('User saved to MongoDB');
 
-            // Navigate to homepage
+
             navigate('/');
         } catch (err) {
             console.error('Registration error:', err);
             setError(err.message);
         }
     };
+
 
     // Google sign-in
     const handleGoogleSignIn = async () => {
@@ -63,11 +60,7 @@ const Register = () => {
                 createdAt: new Date(),
             };
 
-            await fetch('http://localhost:3000/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData),
-            });
+            await axiosInstance.post("/users", userData);
 
             console.log(' Google user saved to MongoDB');
             navigate('/');

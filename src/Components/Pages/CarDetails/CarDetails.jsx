@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../../Auth/AuthContext';
+import axiosInstance from '../../../Api/axiosInstance';
 
 const CarDetails = () => {
     const { id } = useParams();
@@ -51,22 +52,18 @@ const CarDetails = () => {
         };
 
         try {
-            const res = await fetch('http://localhost:3000/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData),
-            });
+            const res = await axiosInstance.post("/bookings", bookingData);
 
-            const data = await res.json();
-
-            if (res.ok) {
-                setBookingMessage('Booking request sent successfully!');
+            if (res.status === 200 || res.status === 201) {
+                setBookingMessage("Booking request sent successfully!");
             } else {
-                setBookingMessage(data.error || 'Booking failed.');
+                setBookingMessage("Booking failed. Please try again.");
             }
         } catch (error) {
-            console.error('Booking error:', error);
-            setBookingMessage(`Booking failed: ${error.message}`);
+            console.error("Booking error:", error);
+            setBookingMessage(
+                error.response?.data?.error || "Booking failed. Try again later."
+            );
         }
     };
 

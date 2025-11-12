@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Auth/AuthContext";
 import Swal from "sweetalert2";
-
+import axiosInstance from "../../../Api/axiosInstance";
 const MyVehicles = () => {
     const { user } = useContext(AuthContext);
     const [vehicles, setVehicles] = useState([]);
@@ -13,14 +13,14 @@ const MyVehicles = () => {
 
     useEffect(() => {
         if (!user) {
-            setLoading(false); 
+            setLoading(false);
             return;
         }
 
         const fetchVehicles = async () => {
             try {
-                const res = await fetch("http://localhost:3000/allVehicles");
-                const data = await res.json();
+                const res = await axiosInstance.get("/allVehicles");
+                const data = res.data;
                 const userVehicles = data.filter(v => v.userEmail === user.email);
                 setVehicles(userVehicles);
             } catch (err) {
@@ -32,7 +32,8 @@ const MyVehicles = () => {
         fetchVehicles();
     }, [user]);
 
-   
+
+
     const handleDelete = async (id) => {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -46,25 +47,18 @@ const MyVehicles = () => {
 
         if (result.isConfirmed) {
             try {
-                const res = await fetch(`http://localhost:3000/vehicles/${id}`, {
-                    method: "DELETE",
-                });
+                const res = await axiosInstance.delete(`/vehicles/${id}`);
+                const data = res.data;
 
-                const data = await res.json();
-
-                if (res.ok) {
-                    
-                    setVehicles(prev => prev.filter(v => v._id !== id));
-                    Swal.fire("Deleted!", data.message || "Vehicle deleted.", "success");
-                } else {
-                    Swal.fire("Error!", data.error || "Failed to delete.", "error");
-                }
+                setVehicles(prev => prev.filter(v => v._id !== id));
+                Swal.fire("Deleted!", data.message || "Vehicle deleted.", "success");
             } catch (err) {
                 console.error(err);
                 Swal.fire("Error!", "Something went wrong.", "error");
             }
         }
     };
+
 
     if (loading) return <p className="text-center mt-20">Loading vehicles...</p>;
     if (!user) return <p className="text-center mt-20">Please log in to see your vehicles.</p>;
