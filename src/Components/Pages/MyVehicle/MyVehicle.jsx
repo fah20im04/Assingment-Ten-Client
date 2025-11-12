@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Auth/AuthContext";
 import Swal from "sweetalert2";
 import axiosInstance from "../../../Api/axiosInstance";
+import LoadingSpinner from "../Loading/LoadingSpinner"; 
+
 const MyVehicles = () => {
     const { user } = useContext(AuthContext);
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
-
 
     useEffect(() => {
         if (!user) {
@@ -31,8 +32,6 @@ const MyVehicles = () => {
         };
         fetchVehicles();
     }, [user]);
-
-
 
     const handleDelete = async (id) => {
         const result = await Swal.fire({
@@ -59,8 +58,7 @@ const MyVehicles = () => {
         }
     };
 
-
-    if (loading) return <p className="text-center mt-20">Loading vehicles...</p>;
+    if (loading) return <LoadingSpinner />; // use spinner instead of text
     if (!user) return <p className="text-center mt-20">Please log in to see your vehicles.</p>;
 
     return (

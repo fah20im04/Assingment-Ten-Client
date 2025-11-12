@@ -5,7 +5,7 @@ import { HiMenu, HiX } from 'react-icons/hi'; // Hamburger icons
 import SearchBar from './SearchBar';
 import { AuthContext } from '../Auth/AuthContext';
 
-const Navbar = ({ onLoginClick }) => {
+const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { user, logOut } = useContext(AuthContext);
 

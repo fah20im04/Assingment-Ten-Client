@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../Auth/AuthContext";
 import axiosInstance from "../../../Api/axiosInstance";
+import LoadingSpinner from "../Loading/LoadingSpinner"; 
 
 const AddVehicle = () => {
     const { user } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const AddVehicle = () => {
         availability: "",
         description: "",
         coverImage: "",
-        userEmail: user.email || "",
+        userEmail: user?.email || "",
     });
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
@@ -55,12 +56,15 @@ const AddVehicle = () => {
         }
     };
 
-
     return (
-        <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="relative max-w-3xl mx-auto px-4 py-8">
             <h2 className="text-3xl font-bold mb-6">Add Vehicle</h2>
 
-            <form className="space-y-4 bg-white p-6 rounded-2xl shadow-lg" onSubmit={handleSubmit}>
+            <form
+                className="space-y-4 bg-white p-6 rounded-2xl shadow-lg"
+                onSubmit={handleSubmit}
+            >
+                {/* Form fields */}
                 <input
                     type="text"
                     name="vehicleName"
@@ -70,7 +74,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <input
                     type="text"
                     name="owner"
@@ -80,7 +83,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <input
                     type="text"
                     name="category"
@@ -90,7 +92,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <input
                     type="number"
                     name="pricePerDay"
@@ -100,7 +101,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <input
                     type="text"
                     name="location"
@@ -110,7 +110,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <input
                     type="text"
                     name="availability"
@@ -120,7 +119,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
                 <textarea
                     name="description"
                     placeholder="Description"
@@ -130,7 +128,6 @@ const AddVehicle = () => {
                     className="w-full p-3 border rounded-lg outline-none"
                     rows={4}
                 ></textarea>
-
                 <input
                     type="text"
                     name="coverImage"
@@ -140,8 +137,6 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                 />
-
-                {/* User Email (read-only) */}
                 <input
                     type="email"
                     name="userEmail"
@@ -152,7 +147,9 @@ const AddVehicle = () => {
 
                 <button
                     type="submit"
-                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600"
+                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-yellow-500 hover:bg-yellow-600"
                         }`}
                     disabled={loading}
                 >
@@ -164,6 +161,13 @@ const AddVehicle = () => {
             {toastMessage && (
                 <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg">
                     {toastMessage}
+                </div>
+            )}
+
+            {/* Car Spinner Overlay */}
+            {loading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                    <LoadingSpinner />
                 </div>
             )}
         </div>

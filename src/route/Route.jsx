@@ -12,6 +12,7 @@ import MyBookings from "../Components/Pages/MyBookings/MyBookings";
 import MyVehicle from "../Components/Pages/MyVehicle/MyVehicle";
 import AddVehicle from "../Components/Pages/AddVehicle/AddVehicle";
 import UpdateVehicle from "../Components/Pages/UpdataVehicle/UpdateVehicle";
+import LoadingSpinner from "../Components/Pages/Loading/LoadingSpinner";
 
 const router = createBrowserRouter([
     {
@@ -70,7 +71,8 @@ const router = createBrowserRouter([
                     <PrivateRoute>
                         <MyBookings />
                     </PrivateRoute>
-                )
+                ),
+                hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>
             },
             {
                 path: '/myVehicles',
@@ -83,7 +85,7 @@ const router = createBrowserRouter([
             {
                 path: '/updateVehicle/:id',
                 element: (
-                    <PrivateRoute>       // If you want only logged-in users
+                    <PrivateRoute>   
                         <UpdateVehicle />
                     </PrivateRoute>
                 )
