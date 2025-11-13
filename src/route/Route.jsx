@@ -2,10 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../Components/RootLayout/RootLayout";
 import Home from "../Components/Pages/Home/Home";
 import Banner from "../Components/Banner/Banner";
-
 import Login from "../Components/Navbar/Login";
-import CarDetails from "../Components/Pages/CarDetails/CarDetails";
 import Register from "../Components/Navbar/Register";
+import CarDetails from "../Components/Pages/CarDetails/CarDetails";
 import AllVehicle from "../Components/Pages/AllVehivle/AllVehicle";
 import PrivateRoute from "./PrivateRoute";
 import MyBookings from "../Components/Pages/MyBookings/MyBookings";
@@ -13,85 +12,80 @@ import MyVehicle from "../Components/Pages/MyVehicle/MyVehicle";
 import AddVehicle from "../Components/Pages/AddVehicle/AddVehicle";
 import UpdateVehicle from "../Components/Pages/UpdataVehicle/UpdateVehicle";
 import LoadingSpinner from "../Components/Pages/Loading/LoadingSpinner";
+import ErrorPage from "../Components/Pages/ErrorPage/Errorpage";
+import axiosPrivate from "../Api/AxiosPrivate";
+import axiosInstance from "../Api/axiosInstance";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <RootLayout></RootLayout>,
+        element: <RootLayout />,
         children: [
+            { path: "/", element: <Home /> },
+
             {
-                path: '/',
-                element: <Home></Home>
-            },
-            {
-                path: '/allVehicles',
+                path: "/allVehicles",
                 loader: async () => {
-                    const res = await fetch('http://localhost:3000/allVehicles');
-                    // if (!res.ok) {
-                    //     throw new Error('Failed to load vehicles');
-                    // }
-                    return res.json();
+                    const res = await axiosPrivate.get("/allVehicles");
+                    return res.data;
                 },
-                element: <AllVehicle />
+                element: <AllVehicle />,
+                hydrateFallbackElement: <LoadingSpinner />,
             },
+
+            { path: "/banner", element: <Banner /> },
+            { path: "/login", element: <Login /> },
+            { path: "/register", element: <Register /> },
+
             {
-                path: '/banner',
-                element: <Banner></Banner>
-            },
-            {
-                path: '/login',
-                element: <Login></Login>
-            },
-            {
-                path: '/register',
-                element: <Register></Register>
-            },
-            {
-                path: '/CarDetails/:id',
+                path: "/CarDetails/:id",
                 loader: async ({ params }) => {
-                    const res = await fetch(`http://localhost:3000/allVehicles/${params.id}`);
-
-                    return res.json();
+                    const res = await axiosInstance.get(`/vehicles/${params.id}`);
+                    return res.data;
                 },
-
-                element:
+                element: (
                     <PrivateRoute>
-                        <CarDetails></CarDetails>
+                        <CarDetails />
                     </PrivateRoute>
+                ),
             },
-            {
-                path: '/myBookings',
-                loader: async () => {
-                    const res = await fetch('http://localhost:3000/bookings');
-                    if (!res.ok) throw new Error('Failed to load bookings');
-                    return res.json();
-                },
 
+
+
+            {
+                path: "/myBookings",
                 element: (
                     <PrivateRoute>
                         <MyBookings />
                     </PrivateRoute>
                 ),
-                hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>
+            },
+
+
+
+
+            {
+                path: "/myVehicles",
+                element: <MyVehicle />
             },
             {
-                path: '/myVehicles',
-                element: <MyVehicle></MyVehicle>
+                path: "/addVehicle",
+                element: <AddVehicle />
             },
+
+
             {
-                path: '/addVehicle',
-                element: <AddVehicle></AddVehicle>
-            },
-            {
-                path: '/updateVehicle/:id',
+                path: "/updateVehicle/:id",
                 element: (
-                    <PrivateRoute>   
+                    <PrivateRoute>
                         <UpdateVehicle />
                     </PrivateRoute>
-                )
-            }
+                ),
+            },
 
-        ]
+            { path: "*", element: <ErrorPage message="Page not found!" code={404} /> },
+        ],
     },
 ]);
+
 export default router;

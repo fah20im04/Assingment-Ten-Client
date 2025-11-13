@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import '../../index.css';
-import { HiMenu, HiX } from 'react-icons/hi'; // Hamburger icons
+import { HiMenu, HiX } from 'react-icons/hi';
 import SearchBar from './SearchBar';
 import { AuthContext } from '../Auth/AuthContext';
 
@@ -9,53 +9,44 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { user, logOut } = useContext(AuthContext);
 
-
     return (
-        <div className="relative w-full"
-        // style={{
-        //     backgroundImage: `url(${Car})`,
-        //     backgroundSize: 'cover',
-        //     backgroundPosition: 'center',
-        //     backgroundRepeat: 'no-repeat',
-        // }}
-        >
+        <div className="relative w-full">
+            {/* Mobile menu */}
             {menuOpen && (
                 <div className="md:hidden absolute text-gray-400 top-20 left-2/3 transform -translate-x-1/2 w-[30%] max-w-xs rounded-2xl shadow-xl border border-gray-600 z-30">
-
-                    <ul className="flex flex-col gap-1 p-3  font-semibold">
+                    <ul className="flex flex-col gap-1 p-3 font-semibold">
                         <li>
                             <NavLink to="/" onClick={() => setMenuOpen(false)}>Home</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/addVehicle" onClick={() => setMenuOpen(false)}>Add Vehicle</NavLink>
-                        </li>
+                        {user && (
+                            <li>
+                                <NavLink to="/addVehicle" onClick={() => setMenuOpen(false)}>Add Vehicle</NavLink>
+                            </li>
+                        )}
                         <li>
                             <NavLink to="/allVehicles" onClick={() => setMenuOpen(false)}>All Vehicles</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/myVehicles" onClick={() => setMenuOpen(false)}>My Vehicles</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/myBookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/register" onClick={() => setMenuOpen(false)}>Register</NavLink>
-                        </li>
-
+                        {user && (
+                            <>
+                                <li>
+                                    <NavLink to="/myVehicles" onClick={() => setMenuOpen(false)}>My Vehicles</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/myBookings" onClick={() => setMenuOpen(false)}>My Bookings</NavLink>
+                                </li>
+                            </>
+                        )}
+                        {!user && (
+                            <li>
+                                <NavLink to="/register" onClick={() => setMenuOpen(false)}>Register</NavLink>
+                            </li>
+                        )}
                     </ul>
                 </div>
             )}
 
-
-
-
-
-
             {/* Navbar */}
             <div className="flex justify-between items-center px-6 md:px-12 py-4 z-20 relative">
-
-
-
                 {/* Logo */}
                 <div className="bg-none bg-opacity-0 p-3 rounded-2xl shadow-md border border-gray-300 w-fit">
                     <a href="/" className="font-bold text-2xl">
@@ -63,40 +54,42 @@ const Navbar = () => {
                     </a>
                 </div>
 
-
-
-
-
-
-
-                {/* Navlinks (hidden on sm/md, visible on lg+) */}
+                {/* Desktop menu */}
                 <div className="hidden md:flex bg-opacity-80 p-4 rounded-2xl w-fit shadow-md flex border border-gray-300 gap-6 font-semibold text-black text-sm h-10">
                     <ul className="flex items-center text-center gap-6 text-sm list-none p-0 m-0">
                         <li>
                             <NavLink to="/">Home</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/addVehicle">Add Vehicle</NavLink>
-                        </li>
+                        {user && (
+                            <li>
+                                <NavLink to="/addVehicle">Add Vehicle</NavLink>
+                            </li>
+                        )}
                         <li>
                             <NavLink to="/allVehicles">All Vehicles</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/myVehicles">My Vehicles</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/myBookings">My Bookings</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/register">Register</NavLink>
-                        </li>
+                        {user && (
+                            <>
+                                <li>
+                                    <NavLink to="/myVehicles">My Vehicles</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/myBookings">My Bookings</NavLink>
+                                </li>
+                            </>
+                        )}
+                        {!user && (
+                            <li>
+                                <NavLink to="/register">Register</NavLink>
+                            </li>
+                        )}
                     </ul>
                 </div>
 
-                <SearchBar></SearchBar>
+                {/* Search bar */}
+                <SearchBar />
 
-
-                {/* Login */}
+                {/* Login / Logout */}
                 <div className="flex items-center gap-4">
                     {user ? (
                         <>
@@ -112,7 +105,9 @@ const Navbar = () => {
                                 alt="Profile"
                                 className="w-10 h-10 rounded-full border-2 border-white"
                             />
+
                         </>
+
                     ) : (
                         <Link
                             to="/login"
@@ -121,6 +116,9 @@ const Navbar = () => {
                             LogIn
                         </Link>
                     )}
+
+
+                    {/* Mobile hamburger */}
                     <div className="md:hidden">
                         <button
                             onClick={() => setMenuOpen(!menuOpen)}
@@ -128,16 +126,11 @@ const Navbar = () => {
                         >
                             {menuOpen ? <HiX /> : <HiMenu />}
                         </button>
+
                     </div>
+                    <button className='btn btn-primary rounded-full size-9 fixed top-20 right-18'>dark</button>
                 </div>
-
-
             </div>
-
-
-
-
-
         </div>
     );
 };

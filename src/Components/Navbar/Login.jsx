@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import Banner from '../Banner/Banner';
 import { AuthContext } from '../Auth/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../Api/axiosInstance';
+import axiosInstance from '../../Api/axiosInstance'; 
 
 const Login = () => {
   const { signIn, signInWithGoogle } = useContext(AuthContext);
@@ -17,6 +17,7 @@ const Login = () => {
     setError("");
 
     try {
+
       const result = await signIn(email, password);
       const user = result.user;
 
@@ -27,16 +28,21 @@ const Login = () => {
         createdAt: new Date(),
       };
 
-
       await axiosInstance.post("/users", userData);
-
       console.log("Logged-in user saved/verified in MongoDB");
+
+      const tokenRes = await axiosInstance.post("/login", { email: user.email });
+      const token = tokenRes.data.token;
+
+      localStorage.setItem("accessToken", token);
+
       navigate("/");
     } catch (err) {
       console.error("Login error:", err);
       setError("Invalid email or password");
     }
   };
+
 
 
   // Google login
@@ -54,16 +60,21 @@ const Login = () => {
         createdAt: new Date(),
       };
 
-
       await axiosInstance.post("/users", userData);
-
       console.log("Google user saved to MongoDB");
+
+
+      const tokenRes = await axiosInstance.post("/login", { email: user.email });
+      const token = tokenRes.data.token;
+      localStorage.setItem("accessToken", token);
+
       navigate("/");
     } catch (err) {
       console.error("Google sign-in failed:", err);
       setError("Google sign-in failed");
     }
   };
+
 
 
 

@@ -25,7 +25,7 @@ const Register = () => {
 
             const result = await createUser(email, password);
             await updateUserProfile(name, photo);
-
+            const user = result.user;
 
             const userData = {
                 name,
@@ -33,10 +33,13 @@ const Register = () => {
                 photo,
                 createdAt: new Date(),
             };
-
             await axiosInstance.post("/users", userData);
-
             console.log('User saved to MongoDB');
+
+
+            const tokenRes = await axiosInstance.post("/login", { email: user.email });
+            const token = tokenRes.data.token;
+            localStorage.setItem("accessToken", token);
 
 
             navigate('/');
@@ -45,6 +48,7 @@ const Register = () => {
             setError(err.message);
         }
     };
+
 
 
     // Google sign-in
@@ -59,16 +63,21 @@ const Register = () => {
                 photo: user.photoURL,
                 createdAt: new Date(),
             };
-
             await axiosInstance.post("/users", userData);
 
-            console.log(' Google user saved to MongoDB');
+
+            const tokenRes = await axiosInstance.post("/login", { email: user.email });
+            const token = tokenRes.data.token;
+            localStorage.setItem("accessToken", token);
+
+            console.log('Google user saved to MongoDB & JWT stored');
             navigate('/');
         } catch (err) {
             console.error('Google sign-in error:', err);
             setError(err.message);
         }
     };
+
 
 
     return (

@@ -3,19 +3,19 @@ import Car from "../../../assets/images.png";
 
 const LoadingSpinner = () => {
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gray-100 relative overflow-hidden">
+    <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-100 relative overflow-hidden">
       {/* Road */}
-      <div className="absolute bottom-20 w-full h-24 bg-gray-800"></div>
+      <div className="absolute bottom-0 w-full h-24 bg-gray-800"></div>
 
       {/* Car */}
       <img
         src={Car}
         alt="Moving Car"
-        className="absolute bottom-24 w-32 animate-carMove"
+        className="w-32 animate-carMove absolute"
       />
 
       {/* Loading Text */}
-      <p className="absolute bottom-8 text-xl font-semibold text-gray-700">
+      <p className="text-4xl font-bold text-red-700 mt-40">
         Loading...
       </p>
 
@@ -23,9 +23,8 @@ const LoadingSpinner = () => {
       <style>
         {`
           @keyframes carMove {
-            0% { transform: translateX(-150px); }
-            50% { transform: translateX(calc(100vw + 150px)); }
-            100% { transform: translateX(-150px); }
+            0% { right: -150px; }
+            100% { right: 1000vw; }
           }
 
           .animate-carMove {

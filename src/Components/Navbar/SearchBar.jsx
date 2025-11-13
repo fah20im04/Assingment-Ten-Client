@@ -6,6 +6,7 @@ const SearchBar = () => {
     return (
         <div className="relative z-20 w-1/5 max-w-md">
             {/* Large screens: always visible */}
+
             <div className="hidden lg:flex relative items-center bg-opacity-90 border border-gray-300 rounded-full px-4 py-2 shadow-md w-full h-[55px]">
                 <input
                     type="text"

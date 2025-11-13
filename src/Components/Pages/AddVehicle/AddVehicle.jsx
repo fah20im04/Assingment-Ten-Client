@@ -1,10 +1,11 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../Auth/AuthContext";
-import axiosInstance from "../../../Api/axiosInstance";
-import LoadingSpinner from "../Loading/LoadingSpinner"; 
+import axiosPrivate from "../../../Api/AxiosPrivate";
+import LoadingSpinner from "../Loading/LoadingSpinner";
 
 const AddVehicle = () => {
     const { user } = useContext(AuthContext);
+
     const [formData, setFormData] = useState({
         vehicleName: "",
         owner: "",
@@ -16,22 +17,24 @@ const AddVehicle = () => {
         coverImage: "",
         userEmail: user?.email || "",
     });
+
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            const res = await axiosInstance.post("/vehicles", formData);
+            // Convert pricePerDay to number before sending
+            const payload = { ...formData, pricePerDay: Number(formData.pricePerDay) };
+
+            const res = await axiosPrivate.post("/vehicles", payload);
 
             setToastMessage(res.data.message || "Vehicle added successfully!");
 
@@ -48,11 +51,15 @@ const AddVehicle = () => {
                 userEmail: user?.email || "",
             });
         } catch (err) {
-            console.error(err);
-            setToastMessage(err.response?.data?.error || "Something went wrong");
+            console.error("Add Vehicle Error:", err);
+            setToastMessage(
+                err.response?.data?.error ||
+                err.message ||
+                "Something went wrong while adding the vehicle"
+            );
         } finally {
             setLoading(false);
-            setTimeout(() => setToastMessage(""), 3000);
+            setTimeout(() => setToastMessage(""), 4000);
         }
     };
 
@@ -64,7 +71,6 @@ const AddVehicle = () => {
                 className="space-y-4 bg-white p-6 rounded-2xl shadow-lg"
                 onSubmit={handleSubmit}
             >
-                {/* Form fields */}
                 <input
                     type="text"
                     name="vehicleName"
@@ -113,7 +119,7 @@ const AddVehicle = () => {
                 <input
                     type="text"
                     name="availability"
-                    placeholder="Availability"
+                    placeholder="Availability (Available/Booked)"
                     value={formData.availability}
                     onChange={handleChange}
                     required
@@ -127,7 +133,7 @@ const AddVehicle = () => {
                     required
                     className="w-full p-3 border rounded-lg outline-none"
                     rows={4}
-                ></textarea>
+                />
                 <input
                     type="text"
                     name="coverImage"
@@ -147,9 +153,7 @@ const AddVehicle = () => {
 
                 <button
                     type="submit"
-                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-yellow-500 hover:bg-yellow-600"
+                    className={`w-full py-3 rounded-xl font-semibold text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600"
                         }`}
                     disabled={loading}
                 >
@@ -157,14 +161,12 @@ const AddVehicle = () => {
                 </button>
             </form>
 
-            {/* Toast Notification */}
             {toastMessage && (
                 <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg">
                     {toastMessage}
                 </div>
             )}
 
-            {/* Car Spinner Overlay */}
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                     <LoadingSpinner />

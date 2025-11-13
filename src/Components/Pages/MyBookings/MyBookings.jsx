@@ -1,20 +1,53 @@
-import React, { useState } from "react";
-import { useLoaderData } from "react-router-dom";
-import axiosInstance from "../../../Api/axiosInstance";
+// src/Pages/MyBookings/MyBookings.jsx
+import React, { useContext, useEffect, useState } from "react";
+import axiosPrivate from "../../../Api/AxiosPrivate";
+import { AuthContext } from "../../Auth/AuthContext";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const MyBookings = () => {
-    const loaderData = useLoaderData();
-    const [bookings, setBookings] = useState(loaderData);
+    const { user, loading } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [bookings, setBookings] = useState([]);
+    const [fetching, setFetching] = useState(true);
 
-    // Handle booking cancel
+    // Redirect if not logged in
+    useEffect(() => {
+        if (!loading && !user) {
+            navigate("/login");
+        }
+    }, [user, loading, navigate]);
+
+    // Fetch bookings
+    useEffect(() => {
+        const fetchBookings = async () => {
+            if (!user) return;
+
+            try {
+                const res = await axiosPrivate.get("/bookings");
+                setBookings(res.data);
+            } catch (err) {
+                console.error("Failed to fetch bookings:", err);
+                Swal.fire(
+                    "Error",
+                    err.response?.data?.error || "Failed to load bookings. Please try again.",
+                    "error"
+                );
+            } finally {
+                setFetching(false);
+            }
+        };
+
+        fetchBookings();
+    }, [user]);
+
+    // Cancel booking
     const handleCancel = async (bookingId) => {
-        const confirmDelete = window.confirm("Are you sure you want to cancel this booking?");
-        if (!confirmDelete) return;
+        const confirm = window.confirm("Are you sure you want to cancel this booking?");
+        if (!confirm) return;
 
         try {
-            const res = await axiosInstance.delete(`/bookings/${bookingId}`);
-
+            const res = await axiosPrivate.delete(`/bookings/${bookingId}`);
             Swal.fire({
                 icon: "success",
                 title: "Cancelled!",
@@ -22,15 +55,20 @@ const MyBookings = () => {
                 timer: 2000,
                 showConfirmButton: false,
             });
-
-            // Remove cancelled booking from state
             setBookings((prev) => prev.filter((b) => b._id !== bookingId));
         } catch (err) {
             console.error("Error cancelling booking:", err);
-            Swal.fire("Error", err.response?.data?.error || "Something went wrong!", "error");
+            Swal.fire(
+                "Error",
+                err.response?.data?.error || "Something went wrong!",
+                "error"
+            );
         }
     };
 
+    if (loading || fetching) {
+        return <p className="text-center mt-10">Loading bookings...</p>;
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -78,7 +116,7 @@ const MyBookings = () => {
                                     onClick={() => handleCancel(booking._id)}
                                     className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl font-semibold"
                                 >
-                                    Booking Cancel
+                                    Cancel Booking
                                 </button>
                             </div>
                         </div>
