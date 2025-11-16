@@ -1,9 +1,9 @@
-// src/Pages/CarDetails/CarDetails.jsx
+
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../Auth/AuthContext";
-import axiosInstance from "../../../Api/axiosInstance"; // public requests
-import axiosPrivate from "../../../Api/AxiosPrivate";   // protected requests
+import axiosInstance from "../../../Api/axiosInstance";
+import axiosPrivate from "../../../Api/AxiosPrivate";   
 
 const CarDetails = () => {
     const { id } = useParams();
@@ -17,7 +17,7 @@ const CarDetails = () => {
     useEffect(() => {
         const fetchVehicle = async () => {
             try {
-                const res = await axiosInstance.get(`/vehicles/${id}`); // public route
+                const res = await axiosPrivate.get(`/vehicles/${id}`); 
                 setVehicle(res.data);
             } catch (error) {
                 console.error("Error fetching vehicle:", error);
@@ -62,7 +62,7 @@ const CarDetails = () => {
         return <p className="text-center mt-20 text-red-500">Vehicle not found or unauthorized.</p>;
 
     return (
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen ">
             <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-8">
                 {/* Vehicle Image */}
                 <div className="lg:w-2/3 w-full rounded-2xl overflow-hidden shadow-lg">

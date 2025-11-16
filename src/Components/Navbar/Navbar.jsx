@@ -128,7 +128,6 @@ const Navbar = () => {
                         </button>
 
                     </div>
-                    <button className='btn btn-primary rounded-full size-9 fixed top-20 right-18'>dark</button>
                 </div>
             </div>
         </div>

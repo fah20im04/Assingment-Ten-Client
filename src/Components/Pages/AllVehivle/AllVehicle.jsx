@@ -28,7 +28,7 @@ const AllVehicle = () => {
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
     return (
-        <div className='p-5 bg-white dark:bg-gray-900 text-black dark:text-white'>
+        <div className='p-5 bg-white  text-black '>
 
             <img
                 className="lg:h-[600px] lg:w-full sm:w-[400px] sm:h-[200px] md:w-full md:h-[400px] object-cover"
