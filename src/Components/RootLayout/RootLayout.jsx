@@ -23,7 +23,7 @@ const RootLayout = () => {
     }
 
     return (
-        <div className="bg-white text-black min-h-screen transition-colors duration-300">
+        <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-darkBg text-white' : 'bg-white text-black'}`}>
             <Navbar toggleTheme={toggleTheme} darkMode={darkMode} />
             <Outlet />
             <Footer />

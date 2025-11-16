@@ -5,13 +5,13 @@ const SearchBar = () => {
 
     return (
         <div className="relative z-20 w-1/5 max-w-md">
-            {/* Large screens: always visible */}
+            
 
             <div className="hidden lg:flex relative items-center bg-opacity-90 border border-gray-300 rounded-full px-4 py-2 shadow-md w-full h-[55px]">
                 <input
                     type="text"
                     placeholder="Search"
-                    className="flex-grow bg-transparent outline-none text-gray-700 placeholder-gray-500 pr-28"
+                    className="flex-grow bg-transparent outline-none text-white placeholder-white pr-28"
                 />
                 <button className="absolute right-2 bg-primary text-white px-4 py-1 rounded-full hover:scale-105 transition-transform">
                     Search
@@ -32,7 +32,7 @@ const SearchBar = () => {
                         <input
                             type="text"
                                 placeholder="Search"
-                                className="flex-grow bg-transparent outline-none text-gray-700 placeholder-gray-500 pr-24"
+                                className="flex-grow bg-transparent outline-none text-white placeholder-white pr-24"
                         />
                         <button
                             onClick={() => setSearchOpen(false)}
