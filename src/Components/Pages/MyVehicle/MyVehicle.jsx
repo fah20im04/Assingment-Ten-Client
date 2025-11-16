@@ -4,6 +4,7 @@ import { AuthContext } from "../../Auth/AuthContext";
 import Swal from "sweetalert2";
 import axiosInstance from "../../../Api/axiosInstance";
 import LoadingSpinner from "../Loading/LoadingSpinner"; 
+import axiosPrivate from "../../../Api/AxiosPrivate";
 
 const MyVehicles = () => {
     const { user } = useContext(AuthContext);
@@ -17,10 +18,11 @@ const MyVehicles = () => {
             setLoading(false);
             return;
         }
+        console.log('My user',user)
 
         const fetchVehicles = async () => {
             try {
-                const res = await axiosInstance.get("/allVehicles");
+                const res = await axiosPrivate.get("/allVehicles");
                 const data = res.data;
                 const userVehicles = data.filter(v => v.userEmail === user.email);
                 setVehicles(userVehicles);
