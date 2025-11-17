@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosPrivate = axios.create({
   baseURL:
-    "https://travelease-ten-server.onrender.com//",
+    "https://travelease-ten-server-4aznpsx9k-fahim-ahmed-ayons-projects.vercel.app/",
 });
 
 axiosPrivate.interceptors.request.use((config) => {
