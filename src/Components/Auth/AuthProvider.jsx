@@ -1,4 +1,4 @@
-// src/context/AuthProvider.jsx
+
 import React, { useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
@@ -20,43 +20,54 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Create user with email/password
+  // ---------------- Create user ----------------
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  // Login with email/password
+  // ---------------- Login ----------------
   const signIn = async (email, password) => {
     setLoading(true);
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    await getJWT(result.user);
-    return result;
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await getJWT(result.user);
+      return result;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Login with Google
+  // ---------------- Google login ----------------
   const signInWithGoogle = async () => {
     setLoading(true);
-    const result = await signInWithPopup(auth, googleProvider);
-    await getJWT(result.user);
-    return result;
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await getJWT(result.user);
+      return result;
+    } catch (err) {
+      console.error("Google login failed:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Update user profile
+  // ---------------- Update profile ----------------
   const updateUserProfile = (name, photoURL) => {
     if (auth.currentUser) {
       return updateProfile(auth.currentUser, { displayName: name, photoURL });
     }
+    return Promise.reject("No current user");
   };
 
-  // Logout
+  // ---------------- Logout ----------------
   const logOut = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       await signOut(auth);
       localStorage.removeItem("accessToken");
       setUser(null);
-      // DO NOT use navigate here
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
@@ -64,28 +75,34 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Get JWT from backend for a Firebase user
+  // ---------------- Get JWT from backend ----------------
   const getJWT = async (firebaseUser) => {
+    if (!firebaseUser?.email) throw new Error("Firebase user has no email");
     try {
-      const email = firebaseUser.email;
-      const res = await axiosInstance.post("/login", { email });
+      const res = await axiosInstance.post("/login", { email: firebaseUser.email });
+      if (!res.data?.token) throw new Error("No token returned from server");
       localStorage.setItem("accessToken", res.data.token);
       setUser(firebaseUser);
     } catch (err) {
       console.error("Failed to get JWT:", err);
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
-  // Observe Firebase auth state changes
+  // ---------------- Observe auth state ----------------
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        await getJWT(currentUser);
-      } else {
-        setUser(null);
-        localStorage.removeItem("accessToken");
+      setLoading(true);
+      try {
+        if (currentUser) {
+          await getJWT(currentUser);
+        } else {
+          localStorage.removeItem("accessToken");
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Auth state error:", err);
+      } finally {
         setLoading(false);
       }
     });
@@ -93,6 +110,7 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  // ---------------- Context value ----------------
   const authInfo = {
     user,
     loading,

@@ -1,23 +1,32 @@
-import React, { useState, useContext } from 'react';
-import Banner from '../Banner/Banner';
-import { AuthContext } from '../Auth/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../Api/axiosInstance'; 
+import React, { useState, useContext } from "react";
+import Banner from "../Banner/Banner";
+import { AuthContext } from "../Auth/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../../Api/axiosInstance";
+import axiosPrivate from "../../Api/AxiosPrivate";
 
 const Login = () => {
   const { signIn, signInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    try {
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must have at least 6 characters, including uppercase and lowercase letters."
+      );
+      return; 
+    }
 
+    try {
       const result = await signIn(email, password);
       const user = result.user;
 
@@ -28,10 +37,10 @@ const Login = () => {
         createdAt: new Date(),
       };
 
-      await axiosInstance.post("/users", userData);
+      await axiosPrivate.post("/users", userData);
       console.log("Logged-in user saved/verified in MongoDB");
 
-      const tokenRes = await axiosInstance.post("/login", { email: user.email });
+      const tokenRes = await axiosPrivate.post("/login", { email: user.email });
       const token = tokenRes.data.token;
 
       localStorage.setItem("accessToken", token);
@@ -42,8 +51,6 @@ const Login = () => {
       setError("Invalid email or password");
     }
   };
-
-
 
   // Google login
   const handleGoogleLogin = async () => {
@@ -63,8 +70,9 @@ const Login = () => {
       await axiosInstance.post("/users", userData);
       console.log("Google user saved to MongoDB");
 
-
-      const tokenRes = await axiosInstance.post("/login", { email: user.email });
+      const tokenRes = await axiosInstance.post("/login", {
+        email: user.email,
+      });
       const token = tokenRes.data.token;
       localStorage.setItem("accessToken", token);
 
@@ -75,15 +83,8 @@ const Login = () => {
     }
   };
 
-
-
-
   return (
-    <div className=''>
-
-
-
-
+    <div className="">
       <div className="flex justify-center mt-32 px-4">
         <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
           <h2 className="text-3xl font-semibold text-gray-800 text-center mb-2">
@@ -151,9 +152,9 @@ const Login = () => {
             </button>
 
             <p className="text-center text-sm text-gray-600 mt-5">
-              Don’t have an account?{' '}
-              <Link to='/register'
-
+              Don’t have an account?{" "}
+              <Link
+                to="/register"
                 className="text-yellow-600 font-medium hover:underline"
               >
                 Register...

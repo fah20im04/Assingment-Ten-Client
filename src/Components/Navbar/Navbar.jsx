@@ -10,14 +10,14 @@ import { Moon, Sun } from "lucide-react";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logOut } = useContext(AuthContext);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme(); // theme hook
 
   return (
     <div className="relative w-full bg-gray-500 dark:bg-darkBg dark:text-white">
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden absolute text-black dark:text-gray-300 top-20 left-2/3 transform -translate-x-1/2 w-[30%] max-w-xs rounded-2xl shadow-xl border border-gray-600 z-30 bg-white dark:bg-darkCard">
-          <ul className="flex flex-col gap-1 p-3 font-semibold">
+        <div className="md:hidden absolute text-black dark:text-gray-300 top-20 left-1/2 transform -translate-x-1/2 w-[60%] max-w-xs rounded-2xl shadow-xl border border-gray-600 z-30 bg-white dark:bg-darkCard">
+          <ul className="flex flex-col gap-2 p-3 font-semibold">
             <li>
               <NavLink to="/" onClick={() => setMenuOpen(false)}>
                 Home
@@ -64,9 +64,9 @@ const Navbar = () => {
       <div className="flex justify-between items-center px-6 md:px-12 py-4 z-20 relative">
         {/* Logo */}
         <div className="bg-none bg-opacity-0 p-3 rounded-2xl shadow-md border border-gray-300 w-fit">
-          <a href="/" className="font-bold text-2xl">
+          <Link to="/" className="font-bold text-2xl">
             TRA<span className="text-primary">VELE</span>ASE
-          </a>
+          </Link>
         </div>
 
         {/* Desktop menu */}
@@ -104,8 +104,17 @@ const Navbar = () => {
         {/* Search bar */}
         <SearchBar />
 
-        {/* Login / Logout */}
+        {/* Login / Logout / Theme */}
         <div className="flex items-center gap-4">
+          {/* Theme toggle button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            title="Toggle Theme"
+          >
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+
           {user ? (
             <>
               <button
@@ -120,14 +129,6 @@ const Navbar = () => {
                 alt="Profile"
                 className="w-10 h-10 rounded-full border-2 border-white"
               />
-
-              {/* Theme toggle */}
-              <button
-                onClick={toggleTheme}
-                className="static p-2 rounded-full bg-gray-200 dark:bg-gray-700 transition"
-              >
-                {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-              </button>
             </>
           ) : (
             <Link
@@ -142,7 +143,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-black  dark:text-white text-3xl"
+              className="text-black dark:text-white text-3xl"
             >
               {menuOpen ? <HiX /> : <HiMenu />}
             </button>
