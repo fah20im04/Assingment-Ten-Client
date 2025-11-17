@@ -1,23 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axiosInstance from "../../../Api/axiosInstance";
+import axiosPrivate from "../../../Api/AxiosPrivate"; // use this if JWT required
 import { useTheme } from "../../Theame/ThemeProvider";
 
 const VehicleCard = () => {
   const [vehicles, setVehicles] = useState([]);
-  const { theme } = useTheme(); // theme hook
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchVehicles = async () => {
+      setLoading(true);
+      setError("");
       try {
-        const res = await axiosInstance.get("/vehicles");
-        setVehicles(res.data);
-      } catch (error) {
-        console.error("Error fetching vehicles:", error);
+        // If JWT required, use axiosPrivate
+        const res = await axiosPrivate.get("/vehicles");
+        console.log("Fetched vehicles:", res.data);
+
+        // Ensure it's an array
+        setVehicles(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Error fetching vehicles:", err);
+        setError("Failed to load vehicles. Please try again.");
+        setVehicles([]); // fallback to empty array
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchVehicles();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-xl font-semibold">Loading vehicles...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-xl text-red-500 font-semibold">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -46,7 +75,6 @@ const VehicleCard = () => {
               <h2 className="card-title text-2xl font-bold text-center">
                 {vehicle.vehicleName}
               </h2>
-
               <p className="mt-2 font-medium text-md">
                 <span
                   className={
